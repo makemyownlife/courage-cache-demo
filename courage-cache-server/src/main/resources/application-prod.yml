@@ -6,7 +6,7 @@ spring:
   #数据库
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/courgae_cache?useUnicode=true&characterEncoding=UTF8&allowMultiQueries=true&serverTimezone=GMT%2B8&
+    url: jdbc:mysql://localhost:3306/mytest?useUnicode=true&characterEncoding=UTF8&allowMultiQueries=true&serverTimezone=GMT%2B8&
     username: root
     password: ilxw
     type: com.alibaba.druid.pool.DruidDataSource
