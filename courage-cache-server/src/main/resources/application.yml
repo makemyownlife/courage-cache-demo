@@ -1,0 +1,21 @@
+spring:
+  profiles:
+    active: test
+  application:
+    name: courage-cache-server
+
+server:
+  port: 9793
+  servlet:
+    context-path: /courage-cache-server
+
+pagehelper:
+  supportMethodsArguments: true
+  reasonable: false
+  helperDialect: mysql
+  params: count=countSql
+
+mybatis:
+  mapper-locations: classpath:mapper/*Mapper.xml
+  type-aliases-package: com.courage.cache.domain.po
+
