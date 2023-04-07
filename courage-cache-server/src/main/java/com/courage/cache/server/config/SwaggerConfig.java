@@ -22,7 +22,7 @@ public class SwaggerConfig {
                 // 加了ApiOperation注解的类，才生成接口文档
                 .apis(RequestHandlerSelectors.withMethodAnnotation(ApiOperation.class))
                 // 包下的类，才生成接口文档
-                .apis(RequestHandlerSelectors.basePackage("com.courage.shardingsphere.jdbc.server.controller"))
+                .apis(RequestHandlerSelectors.basePackage("com.courage.cache.server.controller"))
                 .paths(PathSelectors.any()).build();
     }
 
