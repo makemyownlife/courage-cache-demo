@@ -4,8 +4,12 @@ spring:
     time-zone: GMT+8
 
   redis:
-    host: 127.0.0.1
-    port: 6379
+    redisson:
+      config:
+        singleServerConfig:
+          password: 123456
+          address: "redis://127.0.0.1:6379"
+          database: 1
 
   #数据库
   datasource:
