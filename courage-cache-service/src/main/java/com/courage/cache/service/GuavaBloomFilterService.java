@@ -21,15 +21,15 @@ public class GuavaBloomFilterService {
 
     @PostConstruct
     public void addProduct() {
-        logger.info("初始化布隆过滤器数据开始");
+        logger.info("初始化Guava布隆过滤器数据开始");
         filter.put(1L);
         filter.put(2L);
         filter.put(3L);
         filter.put(4L);
-        logger.info("初始化布隆过滤器数据结束");
+        logger.info("初始化Guava布隆过滤器数据结束");
     }
 
-    public boolean maycontain(Long id) {
+    public boolean mightcontain(Long id) {
         return filter.mightContain(id);
     }
 

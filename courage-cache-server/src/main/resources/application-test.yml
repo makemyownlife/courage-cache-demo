@@ -3,14 +3,6 @@ spring:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT+8
 
-  redis:
-    redisson:
-      config:
-        singleServerConfig:
-          password: 123456
-          address: "redis://127.0.0.1:6379"
-          database: 1
-
   #数据库
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
