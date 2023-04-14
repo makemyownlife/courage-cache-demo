@@ -39,7 +39,7 @@ public class ProductController {
     @GetMapping("/maycontain2")
     @ApiOperation("maycontain2")
     public ResponseEntity maycontain2(Long id) {
-        boolean result = guavaBloomFilterService.mightcontain(id);
+        boolean result = redissonBloomFilterService.mightcontain(id);
         return ResponseEntity.successResult(result);
     }
 
