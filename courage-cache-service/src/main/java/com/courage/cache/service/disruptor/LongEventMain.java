@@ -9,14 +9,9 @@ import java.nio.ByteBuffer;
 /**
  * Created by zhangyong on 2023/9/7.
  */
-public class LongEventLambdasMain {
+public class LongEventMain {
 
     public static void main(String[] args) throws Exception{
-        // 1. 指定环形缓冲区的大小，必须是2的幂次方。
-        // 2. 构建 Disruptor。
-        // 3. 连接处理程序。
-        // 4. 启动 Disruptor，启动所有线程运行。
-        // 5. 从 Disruptor 获取用于发布的环形缓冲区。
         int bufferSize = 1024;
         Disruptor<LongEvent> disruptor =
                 new Disruptor<>(LongEvent::new, bufferSize, DaemonThreadFactory.INSTANCE);
