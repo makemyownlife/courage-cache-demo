@@ -14,9 +14,8 @@ public class LongEventMain {
     public static void main(String[] args) throws Exception{
         int bufferSize = 1024;
         Disruptor<LongEvent> disruptor =
-                new Disruptor<>(LongEvent::new, bufferSize, DaemonThreadFactory.INSTANCE);
-        disruptor.handleEventsWith((event, sequence, endOfBatch) ->
-                System.out.println("currentThread:" + Thread.currentThread().getName() + " Event: " + event));
+                new Disruptor<>(new LongEventFactory(), bufferSize, DaemonThreadFactory.INSTANCE);
+        disruptor.handleEventsWith(new LongEventHandler());
         disruptor.start();
 
         RingBuffer<LongEvent> ringBuffer = disruptor.getRingBuffer();
@@ -26,6 +25,7 @@ public class LongEventMain {
             ringBuffer.publishEvent((event, sequence, buffer) -> event.set(buffer.getLong(0)), bb);
             Thread.sleep(1000);
         }
+        
     }
 
 }
