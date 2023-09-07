@@ -9,14 +9,14 @@ import java.nio.ByteBuffer;
 /**
  * Created by zhangyong on 2023/9/7.
  */
-public class LongEventMain {
+public class LongEventLambdasMain {
 
     public static void main(String[] args) throws Exception{
         int bufferSize = 1024;
         Disruptor<LongEvent> disruptor =
                 new Disruptor<>(LongEvent::new, bufferSize, DaemonThreadFactory.INSTANCE);
         disruptor.handleEventsWith((event, sequence, endOfBatch) ->
-                System.out.println("Event: " + event));
+                System.out.println("currentThread:" + Thread.currentThread().getName() + " Event: " + event));
         disruptor.start();
 
         RingBuffer<LongEvent> ringBuffer = disruptor.getRingBuffer();
