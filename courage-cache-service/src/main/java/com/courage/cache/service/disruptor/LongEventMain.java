@@ -1,5 +1,6 @@
 package com.courage.cache.service.disruptor;
 
+import com.lmax.disruptor.EventTranslatorOneArg;
 import com.lmax.disruptor.RingBuffer;
 import com.lmax.disruptor.dsl.Disruptor;
 import com.lmax.disruptor.util.DaemonThreadFactory;
@@ -25,7 +26,6 @@ public class LongEventMain {
             ringBuffer.publishEvent((event, sequence, buffer) -> event.set(buffer.getLong(0)), bb);
             Thread.sleep(1000);
         }
-        
     }
 
 }
