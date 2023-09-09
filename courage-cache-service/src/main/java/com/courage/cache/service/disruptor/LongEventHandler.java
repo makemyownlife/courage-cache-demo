@@ -11,13 +11,14 @@ public class LongEventHandler implements EventHandler<LongEvent> {
     /**
      * Called when a publisher has published an event to the {@link RingBuffer}
      *
-     * @param longEvent      published to the {@link RingBuffer}
-     * @param sequence       of the event being processed
-     * @param endOfBatch     flag to indicate if this is the last event in a batch from the {@link RingBuffer}
+     * @param longEvent  published to the {@link RingBuffer}
+     * @param sequence   of the event being processed
+     * @param endOfBatch flag to indicate if this is the last event in a batch from the {@link RingBuffer}
      * @throws Exception if the EventHandler would like the exception handled further up the chain.
      */
     @Override
     public void onEvent(LongEvent longEvent, long sequence, boolean endOfBatch) throws Exception {
-        System.out.println("Event: " + longEvent);
+        System.out.println("currentThread:" + Thread.currentThread().getName() + "Event: " + longEvent);
     }
+
 }

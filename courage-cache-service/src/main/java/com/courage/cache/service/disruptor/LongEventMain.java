@@ -25,7 +25,6 @@ public class LongEventMain {
             ringBuffer.publishEvent((event, sequence, buffer) -> event.set(buffer.getLong(0)), bb);
             Thread.sleep(1000);
         }
-        
     }
 
 }
