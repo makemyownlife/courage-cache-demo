@@ -1,8 +1,11 @@
 package com.courage.cache.service.disruptor;
 
+import com.lmax.disruptor.BlockingWaitStrategy;
 import com.lmax.disruptor.EventTranslatorOneArg;
 import com.lmax.disruptor.RingBuffer;
+import com.lmax.disruptor.WaitStrategy;
 import com.lmax.disruptor.dsl.Disruptor;
+import com.lmax.disruptor.dsl.ProducerType;
 import com.lmax.disruptor.util.DaemonThreadFactory;
 
 import java.nio.ByteBuffer;
@@ -12,10 +15,15 @@ import java.nio.ByteBuffer;
  */
 public class LongEventMain {
 
-    public static void main(String[] args) throws Exception{
-        int bufferSize = 1024;
+    public static void main(String[] args) throws Exception {
+        int bufferSize = 2;
         Disruptor<LongEvent> disruptor =
-                new Disruptor<>(new LongEventFactory(), bufferSize, DaemonThreadFactory.INSTANCE);
+                new Disruptor<>(
+                        new LongEventFactory(),
+                        bufferSize,
+                        DaemonThreadFactory.INSTANCE,
+                        ProducerType.SINGLE,
+                        new BlockingWaitStrategy());
         disruptor.handleEventsWith(new LongEventHandler());
         disruptor.start();
 
