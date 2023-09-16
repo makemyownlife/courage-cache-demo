@@ -35,15 +35,9 @@ public class TwoEventHandlerMain {
                 }, (longEvent) -> {
                     System.out.println("currentThread:" + Thread.currentThread().getName() + " 不可重复消费2 消息=" + longEvent.getValue());
                     Thread.sleep(50);
-                    if(longEvent.getValue() == 0) {
-                        Thread.sleep(15000);
-                    }
                 },
                 (longEvent) -> {
                     System.out.println("currentThread:" + Thread.currentThread().getName() + " 不可重复消费3 消息=" + longEvent.getValue());
-                    if(longEvent.getValue() == 0) {
-                        Thread.sleep(15000);
-                    }
                 });
         disruptor.start();
 
