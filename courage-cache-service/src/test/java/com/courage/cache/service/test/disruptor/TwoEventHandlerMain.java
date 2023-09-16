@@ -27,12 +27,23 @@ public class TwoEventHandlerMain {
        // disruptor.handleEventsWith(new LongEventHandler(), new AnotherEventHandler());
         //初始化三个共同消费者
         EventHandlerGroup<LongEvent> orderEventEventHandlerGroup = disruptor.handleEventsWithWorkerPool((longEvent) -> {
-                    System.out.println("不可重复消费1 消息=" + longEvent.getValue());
+                    System.out.println("currentThread:" + Thread.currentThread().getName() + " 不可重复消费1 消息=" + longEvent.getValue());
+                    Thread.sleep(100);
+                    if(longEvent.getValue() == 0) {
+                        Thread.sleep(15000);
+                    }
                 }, (longEvent) -> {
-                    System.out.println("不可重复消费2 消息=" + longEvent.getValue());
+                    System.out.println("currentThread:" + Thread.currentThread().getName() + " 不可重复消费2 消息=" + longEvent.getValue());
+                    Thread.sleep(50);
+                    if(longEvent.getValue() == 0) {
+                        Thread.sleep(15000);
+                    }
                 },
                 (longEvent) -> {
-                    System.out.println("不可重复消费3 消息=" + longEvent.getValue());
+                    System.out.println("currentThread:" + Thread.currentThread().getName() + " 不可重复消费3 消息=" + longEvent.getValue());
+                    if(longEvent.getValue() == 0) {
+                        Thread.sleep(15000);
+                    }
                 });
         disruptor.start();
 
@@ -41,7 +52,7 @@ public class TwoEventHandlerMain {
         for (long l = 0; true; l++) {
             bb.putLong(0, l);
             ringBuffer.publishEvent((event, sequence, buffer) -> event.set(buffer.getLong(0)), bb);
-            Thread.sleep(1000);
+            Thread.sleep(10);
         }
 
     }
