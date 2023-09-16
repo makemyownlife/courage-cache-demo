@@ -1,5 +1,7 @@
 package com.courage.cache.service.test.disruptor;
 
+import java.nio.ByteBuffer;
+
 import com.lmax.disruptor.BlockingWaitStrategy;
 import com.lmax.disruptor.RingBuffer;
 import com.lmax.disruptor.dsl.Disruptor;
@@ -7,13 +9,7 @@ import com.lmax.disruptor.dsl.EventHandlerGroup;
 import com.lmax.disruptor.dsl.ProducerType;
 import com.lmax.disruptor.util.DaemonThreadFactory;
 
-import java.nio.ByteBuffer;
-
-/**
- * 多个事件处理器
- * Created by zhangyong on 2023/9/7.
- */
-public class TwoEventHandlerMain {
+public class EventWorkPoolMain {
 
     public static void main(String[] args) throws Exception {
         int bufferSize = 2;
@@ -24,7 +20,7 @@ public class TwoEventHandlerMain {
                         DaemonThreadFactory.INSTANCE,
                         ProducerType.SINGLE,
                         new BlockingWaitStrategy());
-       // disruptor.handleEventsWith(new LongEventHandler(), new AnotherEventHandler());
+        // disruptor.handleEventsWith(new LongEventHandler(), new AnotherEventHandler());
         //初始化三个共同消费者
         EventHandlerGroup<LongEvent> orderEventEventHandlerGroup = disruptor.handleEventsWithWorkerPool((longEvent) -> {
                     System.out.println("不可重复消费1 消息=" + longEvent.getValue());
