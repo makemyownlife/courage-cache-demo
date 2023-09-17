@@ -8,7 +8,7 @@ import com.lmax.disruptor.dsl.ProducerType;
 
 public class DisruptorManager<T> {
 
-    private static final Integer DEFAULT_CONSUMER_SIZE = Runtime.getRuntime().availableProcessors() << 1;
+    private static final Integer DEFAULT_CONSUMER_SIZE = 4;
 
     public static final Integer DEFAULT_SIZE = 4096 << 1 << 1;
 
