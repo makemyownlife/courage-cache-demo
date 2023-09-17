@@ -2,21 +2,18 @@ package com.courage.cache.service.disruptor;
 
 import com.lmax.disruptor.WorkHandler;
 
-import java.util.Objects;
-import java.util.concurrent.ThreadPoolExecutor;
-
 public class QueueConsumer<T> implements WorkHandler<DataEvent<T>> {
 
-    private ThreadPoolExecutor executor;
+    private QueueConsumerFactory<T> queueConsumerFactory;
 
-    public QueueConsumer(ThreadPoolExecutor executor) {
-        this.executor = executor;
+    public QueueConsumer(QueueConsumerFactory queueConsumerFactory) {
+        this.queueConsumerFactory = queueConsumerFactory;
     }
 
     @Override
     public void onEvent(DataEvent<T> dataEvent) throws Exception {
-        if (Objects.nonNull(dataEvent)) {
-
+        if (dataEvent != null) {
+            queueConsumerFactory.processDataEvent(dataEvent);
         }
     }
 

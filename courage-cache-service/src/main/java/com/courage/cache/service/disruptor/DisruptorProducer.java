@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 
 public class DisruptorProducer<T> {
 
-    private final Logger logger = LoggerFactory.getLogger(DisruptorProvider.class);
+    private final Logger logger = LoggerFactory.getLogger(DisruptorProducer.class);
 
     private final RingBuffer<DataEvent<T>> ringBuffer;
 
