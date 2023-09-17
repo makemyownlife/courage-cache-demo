@@ -35,7 +35,7 @@ public class DisruptorManager<T> {
         Disruptor<DataEvent<T>> disruptor = new Disruptor<>(
                 eventFactory,
                 ringBufferSize,
-                DisruptorThreadFactory.create("disruptor_consumer", false),
+                DisruptorThreadFactory.create("consumer-thread", false),
                 ProducerType.MULTI,
                 new BlockingWaitStrategy()
         );
