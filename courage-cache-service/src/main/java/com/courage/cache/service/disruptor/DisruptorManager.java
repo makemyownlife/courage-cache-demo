@@ -12,7 +12,7 @@ public class DisruptorManager<T> {
 
     public static final Integer DEFAULT_SIZE = 4096 << 1 << 1;
 
-    private ConsumerListener<T> consumerListener;
+    private DataEventListener<T> dataEventListener;
 
     private DisruptorProducer<T> producer;
 
@@ -20,12 +20,12 @@ public class DisruptorManager<T> {
 
     private int consumerSize;
 
-    public DisruptorManager(ConsumerListener<T> consumerListener) {
-        this(consumerListener, DEFAULT_CONSUMER_SIZE, DEFAULT_SIZE);
+    public DisruptorManager(DataEventListener<T> dataEventListener) {
+        this(dataEventListener, DEFAULT_CONSUMER_SIZE, DEFAULT_SIZE);
     }
 
-    public DisruptorManager(ConsumerListener<T> consumerListener, final int consumerSize, final int ringBufferSize) {
-        this.consumerListener = consumerListener;
+    public DisruptorManager(DataEventListener<T> dataEventListener, final int consumerSize, final int ringBufferSize) {
+        this.dataEventListener = dataEventListener;
         this.ringBufferSize = ringBufferSize;
         this.consumerSize = consumerSize;
     }
@@ -41,7 +41,7 @@ public class DisruptorManager<T> {
         );
         DisruptorConsumer<T>[] consumers = new DisruptorConsumer[consumerSize];
         for (int i = 0; i < consumerSize; i++) {
-            consumers[i] = new DisruptorConsumer<>(consumerListener);
+            consumers[i] = new DisruptorConsumer<>(dataEventListener);
         }
         disruptor.handleEventsWithWorkerPool(consumers);
         disruptor.start();
