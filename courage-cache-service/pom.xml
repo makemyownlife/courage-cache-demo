@@ -44,6 +44,13 @@
             <version>3.4.2</version>
         </dependency>
 
+        <!-- 测试 jedis 连接池 -->
+        <dependency>
+            <groupId>redis.clients</groupId>
+            <artifactId>jedis</artifactId>
+            <version>2.9.0</version>
+        </dependency>
+
     </dependencies>
 
 </project>
