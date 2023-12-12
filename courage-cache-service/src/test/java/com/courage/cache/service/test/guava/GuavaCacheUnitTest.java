@@ -78,5 +78,33 @@ public class GuavaCacheUnitTest {
         System.out.println("call value:" + value);
     }
 
+    @Test
+    public void whenEntryIdle_thenEviction()
+            throws InterruptedException {
+        CacheLoader<String, String> loader;
+        loader = new CacheLoader<String, String>() {
+            @Override
+            public String load(String key) {
+                System.out.println("load ....");
+                return key.toUpperCase();
+            }
+        };
+
+        LoadingCache<String, String> cache;
+        cache = CacheBuilder.newBuilder()
+                .expireAfterAccess(2,TimeUnit.MILLISECONDS)
+                .build(loader);
+
+        cache.getUnchecked("hello");
+        assertEquals(1, cache.size());
+
+        cache.getUnchecked("hello");
+        Thread.sleep(300);
+
+        cache.getUnchecked("test");
+        assertEquals(1, cache.size());
+        assertNull(cache.getIfPresent("hello"));
+    }
+
 
 }
