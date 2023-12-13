@@ -78,5 +78,41 @@ public class GuavaCacheUnitTest {
         System.out.println("call value:" + value);
     }
 
+    @Test
+    public void testRefresh() throws InterruptedException, ExecutionException {
+        CacheLoader<String, String> cacheLoader = new CacheLoader<String, String>() {
+            //自动写缓存数据的方法
+            @Override
+            public String load(String key) {
+                System.out.println(Thread.currentThread().getName() + "加载 key:" + key);
+
+                return "value_" + key.toUpperCase();
+            }
+
+            @Override
+            //异步刷新缓存
+            public ListenableFuture<String> reload(String key, String oldValue) throws Exception {
+                System.out.println(Thread.currentThread().getName() + "重新加载 key:" + key + "旧值:" + oldValue);
+                return super.reload(key, oldValue);
+            }
+
+        };
+
+        LoadingCache<String, String> cache = CacheBuilder.newBuilder()
+                // 最大容量为20（基于容量进行回收）
+                .maximumSize(20)
+                // 配置写入后多久使缓存过期
+                .expireAfterWrite(10, TimeUnit.SECONDS)
+                //配置写入后多久刷新缓存
+                .refreshAfterWrite(1, TimeUnit.SECONDS).build(cacheLoader);
+
+        String helloValue = cache.get("hello");
+        System.out.println(helloValue);
+        Thread.sleep(4000);
+        helloValue = cache.getIfPresent("hello");
+        System.out.println(helloValue);
+    }
+
+
 
 }
