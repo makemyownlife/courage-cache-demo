@@ -5,6 +5,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.ListenableFutureTask;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -109,6 +110,7 @@ public class GuavaCacheUnitTest {
             @Override
             public String load(String key) {
                 System.out.println(Thread.currentThread().getName() + " 加载 key:" + key);
+                // 从数据库加载数据
                 return "value_" + key.toUpperCase();
             }
 
@@ -116,9 +118,9 @@ public class GuavaCacheUnitTest {
             //异步刷新缓存
             public ListenableFuture<String> reload(String key, String oldValue) throws Exception {
                 System.out.println(Thread.currentThread().getName() + " 重新加载 key:" + key + " oldValue=" + oldValue);
+                Thread.sleep(200000);
                 return super.reload(key, oldValue);
             }
-
         };
 
         LoadingCache<String, String> cache = CacheBuilder.newBuilder()
@@ -153,4 +155,106 @@ public class GuavaCacheUnitTest {
         Thread.sleep(2000);
 
     }
+
+    @Test
+    public void testAnsynRefreshMethod1() throws InterruptedException, ExecutionException {
+        ExecutorService executorService = Executors.newFixedThreadPool(5);
+        CacheLoader<String, String> cacheLoader = new CacheLoader<String, String>() {
+            //自动写缓存数据的方法
+            @Override
+            public String load(String key) {
+                System.out.println(Thread.currentThread().getName() + " 加载 key:" + key);
+                // 从数据库加载数据
+                return "value_" + key.toUpperCase();
+            }
+
+            @Override
+            //异步刷新缓存
+            public ListenableFuture<String> reload(String key, String oldValue) throws Exception {
+                ListenableFutureTask<String> futureTask = ListenableFutureTask.create(() -> {
+                    System.out.println(Thread.currentThread().getName() + " 异步加载 key:" + key + " oldValue:" + oldValue);
+                    Thread.sleep(1000);
+                    return load(key);
+                });
+                executorService.submit(futureTask);
+                return futureTask;
+            }
+        };
+
+        LoadingCache<String, String> cache = CacheBuilder.newBuilder()
+                // 最大容量为20（基于容量进行回收）
+                .maximumSize(20)
+                //配置写入后多久刷新缓存
+                .refreshAfterWrite(2, TimeUnit.SECONDS).build(cacheLoader);
+
+        String key = "hello";
+        // 第一次加载
+        String value = cache.get(key);
+        System.out.println(value);
+        Thread.sleep(3000);
+
+        for (int i = 0; i < 10; i++) {
+            executorService.execute(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        String value2 = cache.get(key);
+                        System.out.println(Thread.currentThread().getName() + value2);
+                        // 第二次加载
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
+
+        Thread.sleep(20000);
+    }
+
+    @Test
+    public void testAnsynRefreshMethod2() throws InterruptedException, ExecutionException {
+        ExecutorService executorService = Executors.newFixedThreadPool(5);
+        CacheLoader<String, String> cacheLoader = CacheLoader.asyncReloading(
+                new CacheLoader<String, String>() {
+                    //自动写缓存数据的方法
+                    @Override
+                    public String load(String key) {
+                        System.out.println(Thread.currentThread().getName() + " 加载 key:" + key);
+                        // 从数据库加载数据
+                        return "value_" + key.toUpperCase();
+                    }
+                }
+                , executorService);
+
+        LoadingCache<String, String> cache = CacheBuilder.newBuilder()
+                // 最大容量为20（基于容量进行回收）
+                .maximumSize(20)
+                //配置写入后多久刷新缓存
+                .refreshAfterWrite(2, TimeUnit.SECONDS).build(cacheLoader);
+
+        String key = "hello";
+        // 第一次加载
+        String value = cache.get(key);
+        System.out.println(value);
+        Thread.sleep(3000);
+
+        for (int i = 0; i < 10; i++) {
+            executorService.execute(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        String value2 = cache.get(key);
+                        System.out.println(Thread.currentThread().getName() + value2);
+                        // 第二次加载
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
+
+        Thread.sleep(20000);
+    }
+
+
 }
