@@ -227,8 +227,9 @@ public class GuavaCacheUnitTest {
                 , executorService);
 
         LoadingCache<String, String> cache = CacheBuilder.newBuilder()
+                .concurrencyLevel(10)
                 // 最大容量为20（基于容量进行回收）
-                .maximumSize(20)
+                .maximumSize(40)
                 //配置写入后多久刷新缓存
                 .refreshAfterWrite(2, TimeUnit.SECONDS).build(cacheLoader);
 
