@@ -10,6 +10,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.UUID;
 import java.util.concurrent.*;
 
 import static org.junit.Assert.*;
@@ -165,7 +166,7 @@ public class GuavaCacheUnitTest {
             public String load(String key) {
                 System.out.println(Thread.currentThread().getName() + " 加载 key:" + key);
                 // 从数据库加载数据
-                return "value_" + key.toUpperCase();
+                return  key.toUpperCase() + UUID.randomUUID().toString();
             }
 
             @Override
@@ -173,7 +174,7 @@ public class GuavaCacheUnitTest {
             public ListenableFuture<String> reload(String key, String oldValue) throws Exception {
                 ListenableFutureTask<String> futureTask = ListenableFutureTask.create(() -> {
                     System.out.println(Thread.currentThread().getName() + " 异步加载 key:" + key + " oldValue:" + oldValue);
-                    Thread.sleep(1000);
+                    Thread.sleep(10000);
                     return load(key);
                 });
                 executorService.submit(futureTask);
@@ -193,22 +194,33 @@ public class GuavaCacheUnitTest {
         System.out.println(value);
         Thread.sleep(3000);
 
-        for (int i = 0; i < 10; i++) {
-            executorService.execute(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        String value2 = cache.get(key);
-                        System.out.println(Thread.currentThread().getName() + value2);
-                        // 第二次加载
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
+        for(int i= 0 ;i < 10 ;i ++) {
+            System.out.println(Thread.currentThread().getName() + "get");
+            String value2 = cache.get(key);
+            System.out.println(Thread.currentThread().getName() + value2);
         }
 
-        Thread.sleep(20000);
+//        System.out.println("==================================================================");
+//        for (int i = 0; i < 10; i++) {
+//            executorService.execute(new Runnable() {
+//                @Override
+//                public void run() {
+//                    try {
+//                        System.out.println(Thread.currentThread().getName() + "get");
+//                        String value2 = cache.get(key);
+//                        System.out.println(Thread.currentThread().getName() + value2);
+//                        // 第二次加载
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//            });
+//        }
+        System.out.println("........");
+        Thread.sleep(12000);
+        String value2 = cache.get(key);
+        System.out.println(Thread.currentThread().getName() + value2);
+        Thread.sleep(120000);
     }
 
     @Test
@@ -229,7 +241,7 @@ public class GuavaCacheUnitTest {
         LoadingCache<String, String> cache = CacheBuilder.newBuilder()
                 .concurrencyLevel(10)
                 // 最大容量为20（基于容量进行回收）
-                .maximumSize(40)
+                .maximumSize(9)
                 //配置写入后多久刷新缓存
                 .refreshAfterWrite(2, TimeUnit.SECONDS).build(cacheLoader);
 
@@ -237,7 +249,14 @@ public class GuavaCacheUnitTest {
         // 第一次加载
         String value = cache.get(key);
         System.out.println(value);
-        Thread.sleep(3000);
+
+        String key2 = "hello2";
+        // 第一次加载
+        String value2 = cache.get(key2);
+        System.out.println(value2);
+
+        String value3 = cache.get(key2);
+        System.out.println(value3);
 
         for (int i = 0; i < 10; i++) {
             executorService.execute(new Runnable() {
