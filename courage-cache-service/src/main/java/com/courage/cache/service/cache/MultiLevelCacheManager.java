@@ -19,9 +19,16 @@ public class MultiLevelCacheManager implements CacheManager {
 
     private final static Logger logger = LoggerFactory.getLogger(MultiLevelCacheManager.class);
 
-    Map<String, MultiLevelCacheConfig> configMap = new ConcurrentHashMap<String, MultiLevelCacheConfig>();
+    private Map<String, MultiLevelCacheConfig> configMap;
 
     private ConcurrentMap<String, Cache> instanceMap = new ConcurrentHashMap<String, Cache>();
+
+    private MultiLevelChannel multiLevelChannel;
+
+    public MultiLevelCacheManager(MultiLevelChannel multiLevelChannel, Map<String, MultiLevelCacheConfig> configMap) {
+        this.multiLevelChannel = multiLevelChannel;
+        this.configMap = configMap;
+    }
 
     @Override
     public Cache getCache(String name) {
@@ -30,7 +37,7 @@ public class MultiLevelCacheManager implements CacheManager {
             return cache;
         }
         MultiLevelCacheConfig config = configMap.get(name);
-        cache = createTwoLevelCache(name, config);
+        cache = createMultiLevelCache(name, config);
         return cache;
     }
 
@@ -39,7 +46,9 @@ public class MultiLevelCacheManager implements CacheManager {
         return Collections.unmodifiableSet(configMap.keySet());
     }
 
-    private synchronized Cache createTwoLevelCache(String cacheName, MultiLevelCacheConfig multiLevelCacheConfig) {
+    private synchronized Cache createMultiLevelCache(String cacheName, MultiLevelCacheConfig multiLevelCacheConfig) {
+        com.github.benmanes.caffeine.cache.Cache localCache = multiLevelChannel.getCaffeine().build();
+
         return null;
     }
 

@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@AutoConfigureBefore(RedisConfig.class)
+@AutoConfigureBefore(MyCacheConfig.class)
 public class DisruptorConfig {
 
     private final static Logger logger = LoggerFactory.getLogger(DisruptorConfig.class);
