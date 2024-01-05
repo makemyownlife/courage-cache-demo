@@ -15,11 +15,11 @@ import java.util.concurrent.ConcurrentMap;
  * 两级缓存
  * Created by zhangyong on 2021/12/5.
  */
-public class TwoLevelCacheManager implements CacheManager {
+public class MultiLevelCacheManager implements CacheManager {
 
-    private final static Logger logger = LoggerFactory.getLogger(TwoLevelCacheManager.class);
+    private final static Logger logger = LoggerFactory.getLogger(MultiLevelCacheManager.class);
 
-    Map<String, TwoLevelCacheConfig> configMap = new ConcurrentHashMap<String, TwoLevelCacheConfig>();
+    Map<String, MultiLevelCacheConfig> configMap = new ConcurrentHashMap<String, MultiLevelCacheConfig>();
 
     private ConcurrentMap<String, Cache> instanceMap = new ConcurrentHashMap<String, Cache>();
 
@@ -29,7 +29,9 @@ public class TwoLevelCacheManager implements CacheManager {
         if (cache != null) {
             return cache;
         }
-        return null;
+        MultiLevelCacheConfig config = configMap.get(name);
+        cache = createTwoLevelCache(name, config);
+        return cache;
     }
 
     @Override
@@ -37,8 +39,8 @@ public class TwoLevelCacheManager implements CacheManager {
         return Collections.unmodifiableSet(configMap.keySet());
     }
 
-    private Cache createTwoLevelCache(String cacheName , ) {
-
+    private synchronized Cache createTwoLevelCache(String cacheName, MultiLevelCacheConfig multiLevelCacheConfig) {
+        return null;
     }
 
 }

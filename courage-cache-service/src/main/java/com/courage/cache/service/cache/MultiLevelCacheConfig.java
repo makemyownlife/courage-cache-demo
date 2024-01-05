@@ -6,7 +6,7 @@ package com.courage.cache.service.cache;
  * @author Nikita Koksharov
  *
  */
-public class TwoLevelCacheConfig {
+public class MultiLevelCacheConfig {
 
     private long ttl;
 
@@ -19,7 +19,7 @@ public class TwoLevelCacheConfig {
      * <code>ttl = 0</code> and <code>maxIdleTime = 0</code>.
      *
      */
-    public TwoLevelCacheConfig() {
+    public MultiLevelCacheConfig() {
     }
 
     /**
@@ -32,7 +32,7 @@ public class TwoLevelCacheConfig {
      * if <code>maxIdleTime</code> and <code>ttl</code> params are equal to <code>0</code>
      * then entry stores infinitely.
      */
-    public TwoLevelCacheConfig(long ttl, long maxIdleTime) {
+    public MultiLevelCacheConfig(long ttl, long maxIdleTime) {
         super();
         this.ttl = ttl;
         this.maxIdleTime = maxIdleTime;
