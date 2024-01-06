@@ -1,5 +1,9 @@
 package com.courage.cache.service.cache;
 
+import org.redisson.api.RMapCache;
+import org.redisson.api.RedissonClient;
+import org.redisson.spring.cache.CacheConfig;
+import org.redisson.spring.cache.RedissonCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.Cache;
@@ -38,6 +42,7 @@ public class MultiLevelCacheManager implements CacheManager {
         }
         MultiLevelCacheConfig config = configMap.get(name);
         cache = createMultiLevelCache(name, config);
+        instanceMap.put(name, cache);
         return cache;
     }
 
@@ -46,10 +51,20 @@ public class MultiLevelCacheManager implements CacheManager {
         return Collections.unmodifiableSet(configMap.keySet());
     }
 
-    private synchronized Cache createMultiLevelCache(String cacheName, MultiLevelCacheConfig multiLevelCacheConfig) {
+    private synchronized MultiLevelCache createMultiLevelCache(String cacheName, MultiLevelCacheConfig multiLevelCacheConfig) {
         com.github.benmanes.caffeine.cache.Cache localCache = multiLevelChannel.getCaffeine().build();
+        RedissonCache redissonCache = createRedissonCache(multiLevelChannel.getRedissonClient(), cacheName, multiLevelCacheConfig);
+        return new MultiLevelCache(cacheName, localCache, redissonCache);
+    }
 
-        return null;
+    private RedissonCache createRedissonCache(RedissonClient redissonClient, String name, MultiLevelCacheConfig multiLevelCacheConfig) {
+        CacheConfig cacheConfig = new CacheConfig();
+        cacheConfig.setTTL(multiLevelCacheConfig.getTTL());
+        cacheConfig.setMaxSize(multiLevelCacheConfig.getMaxSize());
+        cacheConfig.setMaxIdleTime(multiLevelCacheConfig.getMaxIdleTime());
+        RMapCache<Object, Object> map = redissonClient.getMapCache(name);
+        RedissonCache cache = new RedissonCache(map, cacheConfig, true);
+        return cache;
     }
 
 }
