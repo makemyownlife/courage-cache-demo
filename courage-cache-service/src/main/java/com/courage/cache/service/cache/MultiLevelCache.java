@@ -4,6 +4,7 @@ import org.redisson.spring.cache.RedissonCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.Cache;
+import org.springframework.cache.support.SimpleValueWrapper;
 
 import java.util.concurrent.Callable;
 
@@ -38,7 +39,11 @@ public class MultiLevelCache implements Cache {
 
     @Override
     public ValueWrapper get(Object key) {
-        return null;
+        Object result = getRawResult(key);
+        if(result == null) {
+            return null;
+        }
+        return new SimpleValueWrapper(result);
     }
 
     public Object getRawResult(Object key) {
