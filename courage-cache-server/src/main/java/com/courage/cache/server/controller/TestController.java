@@ -7,6 +7,10 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.connection.ReturnType;
+import org.springframework.data.redis.connection.stream.ObjectRecord;
+import org.springframework.data.redis.connection.stream.Record;
+import org.springframework.data.redis.connection.stream.RecordId;
+import org.springframework.data.redis.connection.stream.StreamRecords;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,9 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @Api(tags = "测试接口")
 @RestController
@@ -154,6 +156,18 @@ public class TestController {
         }
 
         return ResponseEntity.successResult(null);
+    }
+
+    @GetMapping("/stream")
+    @ApiOperation("stream")
+    public ResponseEntity stream() {
+        Map<String ,String> map = new HashMap<>();
+        map.put("name" , "zhangyogn");
+        Record record = StreamRecords.newRecord().ofMap(map).withStreamKey("mystream").withId(RecordId.autoGenerate());
+
+        RecordId recordId = redisTemplate.opsForStream()
+                .add(record);
+        return  ResponseEntity.successResult(recordId.getValue());
     }
 
 }
