@@ -41,13 +41,19 @@ public class RedisConfig {
 
 
     @Bean
-    public Subscription subscription(RedisConnectionFactory factory) {
+    public Subscription subscription(RedisConnectionFactory factory, RedisTemplate<String, Object> redisTemplate) {
         var options = StreamMessageListenerContainer
                 .StreamMessageListenerContainerOptions
                 .builder()
                 .pollTimeout(Duration.ofSeconds(1))
                 .build();
-        //  initStream("mystream","mygroup");	//详细描述请看下方的问题补充——初始化key和group
+
+        // 创建 group
+        boolean hasKey = redisTemplate.hasKey("mystream");
+        if(!hasKey) {
+            redisTemplate.opsForStream().createGroup("mystream", "mygroup");
+        }
+
         var listenerContainer = StreamMessageListenerContainer.create(factory, options);
         var subscription = listenerContainer.receiveAutoAck(
                 Consumer.from("mygroup", "courage-cache-demo"),
